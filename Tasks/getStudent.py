@@ -41,8 +41,8 @@ def getStudent(student_num: str) -> dict[str, str]:
                     }
                     return student_detail
                 else:
-                    raise Exception(f"No student found with number {
-                                    student_number}")
+                    raise Exception(
+                        f"No student found with number {student_number}")
     except sqlite3.Error as e:
         print(f"An error occurred while retrieving the student: {e}")
         raise e

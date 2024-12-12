@@ -12,7 +12,7 @@ from Tasks.addStudent import addStudent
 from Tasks.deleteStudent import deleteStudent
 from Tasks.getStudent import getStudent
 from mygui import pygui as gui
-import mymisc.startup as mm
+import misc.startup as mm
 """
 Yes I know this is a horribly hacky way to
 get a global variable I can use within the imported modules

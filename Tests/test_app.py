@@ -1,3 +1,24 @@
+import shutil
+import sys
+import builtins
+import sqlite3
+from contextlib import closing
+from os import path
+try:
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    from Tasks.addStudent import addStudent
+    from Tasks.deleteStudent import deleteStudent
+    from Tasks.getStudent import getStudent
+    import misc.startup as mm
+except ImportError:
+    print("An error occurred while importing the functions:", e)
+    raise e
+
+builtins.DB_PATH = 'Student_Records'
+builtins.DB_NAME = 'student_records.db'
+builtins.DB_FILE = DB_PATH + "/" + DB_NAME
+print("Database file path:", DB_FILE)
+
 '''
 Import and test your functions here
 Example:
@@ -10,18 +31,6 @@ Using assert or unittest would fetch you more marks.
 '''
 Test your functions here
 '''
-
-
-import sqlite3
-import os
-import builtins
-from contextlib import closing
-from Tasks.addStudent import addStudent
-from Tasks.deleteStudent import deleteStudent
-from Tasks.getStudent import getStudent
-DB_PATH = 'Test_Student_Records'
-DB_NAME = 'Test_student_records.db'
-DB_FILE = DB_PATH + "/" + DB_NAME
 
 
 def test_addStudent():
@@ -91,7 +100,115 @@ def test_getStudent():
         print("An error occurred while retrieving student:", e)
 
 
+def test_startup_no_dir():
+    # first test the startup function when no Student_Records directory exists
+    # remove the Student_Records directory if it exists
+    try:
+        shutil.rmtree(DB_PATH)
+    except FileNotFoundError:
+        pass
+    status = mm.startup()
+    try:
+        shutil.rmtree(DB_PATH)
+    except FileNotFoundError:
+        pass
+    return status
+
+
+def test_startup_no_db():
+    # test the startup function when Student_Records directory exists but no database file
+    try:
+        shutil.rmtree(DB_PATH)
+    except FileNotFoundError:
+        pass
+    # create the Student_Records directory only
+    try:
+        # make the Student_Records folder
+        shutil.os.mkdir(DB_PATH)
+    except Exception as e:
+        print("An error occurred while creating the Student_Records directory:", e)
+        raise e
+    status = mm.startup()
+    try:
+        shutil.rmtree(DB_PATH)
+    except FileNotFoundError:
+        pass
+    return status
+
+
+def test_startup_db_exists():
+    # test the startup function when Student_Records directory exists and database file exists
+    try:
+        shutil.rmtree(DB_PATH)
+    except FileNotFoundError:
+        pass
+    # create the Student_Records directory and the database file
+    try:
+        shutil.os.mkdir(DB_PATH)
+        with closing(sqlite3.connect(DB_FILE)) as conn:
+            with closing(conn.cursor()) as cursor:
+                _ = cursor.execute('''
+                     CREATE TABLE IF NOT EXISTS students (
+                         student_number INTEGER PRIMARY KEY,
+                         student_name TEXT NOT NULL,
+                         course_name TEXT NOT NULL
+                     )
+                 ''')
+                conn.commit()
+
+    except Exception as e:
+        print("An error occurred while creating the Student_Records directory and the database file:", e)
+        raise e
+    status = mm.startup()
+    # clean up the broken database file
+    try:
+        shutil.rmtree(DB_PATH)
+    except FileNotFoundError:
+        pass
+    return status
+
+
+def test_startup_corrupted_db():
+    # test the startup function when Student_Records directory exists but the database file is corrupted
+    try:
+        shutil.rmtree(DB_PATH)
+    except FileNotFoundError:
+        pass
+    # create the Student_Records directory and the database file
+    try:
+        # make the Student_Records folder
+        shutil.os.mkdir(DB_PATH)
+        # make the database file
+        with closing(sqlite3.connect(DB_FILE)) as conn:
+            with closing(conn.cursor()) as cursor:
+                _ = cursor.execute('''
+                     CREATE TABLE IF NOT EXISTS students (
+                         student_number INTEGER PRIMARY KEY,
+                         student_name TEXT NOT NULL,
+                         course_name TEXT NOT NULL
+                     )
+                 ''')
+                conn.commit()
+
+        with open(DB_FILE, 'w') as f:
+            _ = f.write("corrupted file >:3")
+    except Exception as e:
+        print("An error occurred while creating corupted db:", e)
+        raise e
+    status = mm.startup()
+    try:
+        shutil.rmtree(DB_PATH)
+    except FileNotFoundError:
+        pass
+    return not status
+
+
 if __name__ == "__main__":
-    test_addStudent()
-    test_getStudent()
-    test_deleteStudent()
+    assert test_startup_no_dir()
+    assert test_startup_no_db()
+    assert test_startup_db_exists()
+    assert test_startup_corrupted_db()
+    assert mm.startup()
+    assert test_getStudent()
+    assert test_addStudent()
+    assert test_deleteStudent()

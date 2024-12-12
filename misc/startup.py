@@ -3,7 +3,7 @@ import os
 from contextlib import closing
 
 
-def startup():
+def startup() -> bool:
     """
     startup - check if the database exists
     if not create it and initialize the table
@@ -13,7 +13,8 @@ def startup():
         os.makedirs(DB_PATH)
     if not initialize_db():
         print("Error initializing database.")
-        exit(1)
+        return False
+    return True
 
 
 def initialize_db() -> bool:
