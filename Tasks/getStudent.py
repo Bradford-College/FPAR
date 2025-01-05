@@ -1,5 +1,6 @@
 import sqlite3
 from contextlib import closing
+from components.config import DB_FILE
 
 
 def getStudent(student_num: str) -> dict[str, str]:

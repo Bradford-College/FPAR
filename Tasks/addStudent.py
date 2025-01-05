@@ -1,5 +1,6 @@
 import sqlite3
 from contextlib import closing
+from components.config import DB_FILE
 
 
 def addStudent(student_detail: dict[str, str]) -> None:

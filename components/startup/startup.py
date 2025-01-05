@@ -1,6 +1,7 @@
 import sqlite3
 import os
 from contextlib import closing
+from components.config import DB_PATH, DB_FILE
 
 
 def startup() -> bool:

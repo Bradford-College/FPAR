@@ -1,5 +1,6 @@
 import sqlite3
 from contextlib import closing
+from components.config import DB_FILE
 
 
 def deleteStudent(student_number: str) -> dict[str, str]:

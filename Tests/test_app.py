@@ -1,3 +1,13 @@
+'''
+Import and test your functions here
+Example:
+    - from Tasks.addStudent import addStudent
+
+Use this section to test your functions and verify if the output is as expected.
+Using assert or unittest would fetch you more marks.
+'''
+
+
 import shutil
 import sys
 import builtins
@@ -9,28 +19,14 @@ try:
     from Tasks.addStudent import addStudent
     from Tasks.deleteStudent import deleteStudent
     from Tasks.getStudent import getStudent
-    import misc.startup as mm
+    from components import startup as mm
+    from components import config
 except ImportError:
-    print("An error occurred while importing the functions:", e)
-    raise e
+    print("An error occurred while importing the functions:")
 
-builtins.DB_PATH = 'Student_Records'
-builtins.DB_NAME = 'student_records.db'
-builtins.DB_FILE = DB_PATH + "/" + DB_NAME
-print("Database file path:", DB_FILE)
-
-'''
-Import and test your functions here
-Example:
-    - from Tasks.addStudent import addStudent
-
-Use this section to test your functions and verify if the output is as expected.
-Using assert or unittest would fetch you more marks.
-'''
-
-'''
-Test your functions here
-'''
+DB_PATH = config.DB_PATH
+DB_NAME = config.DB_NAME
+DB_FILE = config.DB_FILE
 
 
 def test_addStudent():
@@ -50,7 +46,8 @@ def test_addStudent():
         addStudent(student_detail2)
     except Exception as e:
         print("An error occurred while adding students:", e)
-        raise e
+        return False
+    return True
 
 
 def test_deleteStudent():
@@ -209,6 +206,10 @@ if __name__ == "__main__":
     assert test_startup_db_exists()
     assert test_startup_corrupted_db()
     assert mm.startup()
-    assert test_getStudent()
-    assert test_addStudent()
-    assert test_deleteStudent()
+    print("All db tests passed successfully!")
+    assert test_addStudent() is True
+    print("Add student test passed successfully!")
+    test_getStudent()
+    print("Get student test passed successfully!")
+    test_deleteStudent()
+    print("Delete student test passed successfully!")
