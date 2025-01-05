@@ -19,6 +19,9 @@ def startup() -> bool:
 
 
 def initialize_db() -> bool:
+    """
+    Creates database, is called by startup()
+    """
     try:
         with closing(sqlite3.connect(DB_FILE)) as conn:
             with closing(conn.cursor()) as cursor:

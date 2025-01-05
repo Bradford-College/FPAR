@@ -3,7 +3,7 @@ from contextlib import closing
 from Tasks.addStudent import addStudent
 
 
-def promptStudent():
+def promptStudent() -> None:
     """
     Prompts a User to enter details and maps to the student_detail dictionary
 
@@ -20,6 +20,8 @@ def promptStudent():
 
     Note:
         This function requires the implementation of error handling.
+
+    # This function is redundant in the complete implementation of the project.
     """
     while True:
         try:
